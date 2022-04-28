@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
-import * as st from './Slider.module.css'
+import styled from 'styled-components'
 import cn from 'classnames'
+
+const Track = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+`
 
 // position the slider:
 function translateX(ref: HTMLDivElement, slide: number, offset: number) {
@@ -119,8 +126,8 @@ const Slider = ({ children, className }: Props) => {
           onClick={() => goToSlide(currentSlide - slidesToScroll)}
           className="arrow"
         ></button>
-        <ul
-          className={cn('track', st.track)}
+        <Track
+          className="track"
           style={{
             transform: translateX(
               ref.current,
@@ -133,7 +140,7 @@ const Slider = ({ children, className }: Props) => {
           {React.Children.map(slides, (slide, key) => (
             <li key={key}>{slide}</li>
           ))}
-        </ul>
+        </Track>
         <button
           onClick={() => goToSlide(currentSlide + slidesToScroll)}
           className="arrow"
