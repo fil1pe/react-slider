@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
+import * as st from './Slider.module.css'
 import cn from 'classnames'
 
+// position the slider:
 function translateX(ref: HTMLDivElement, slide: number, offset: number) {
   if (!ref) return `translateX(${slide * -100}%)`
   return `translateX(${
@@ -8,18 +10,19 @@ function translateX(ref: HTMLDivElement, slide: number, offset: number) {
   }px)`
 }
 
+// component settings:
 type Props = {
   children: React.ReactNode
   className: string
 }
 
 const Slider = ({ children, className }: Props) => {
-  const [locked, setLocked] = useState(false)
+  const [locked, setLocked] = useState(false) // mutex
 
-  const slidesToScroll = 1
-  const slideCount = React.Children.count(children)
+  const slidesToScroll = 1 // number of slides to scroll on click on prev/next
+  const slideCount = React.Children.count(children) // total number of slides
   const lastSlide = slideCount - slidesToScroll
-  const [transition, setTransition] = useState<number>(0.5)
+  const [transition, setTransition] = useState<number>(0.5) // transition duration
   const [currentSlide, setCurrentSlide] = useState(0)
 
   const goToSlide = (slide: number) => {
@@ -27,6 +30,7 @@ const Slider = ({ children, className }: Props) => {
     setLocked(true)
     if (slide >= slideCount) {
       setCurrentSlide(slideCount)
+      // magic for infinite slider:
       setTimeout(() => {
         setTransition(0)
         setCurrentSlide(0)
@@ -37,6 +41,7 @@ const Slider = ({ children, className }: Props) => {
       }, 500)
     } else if (slide < 0) {
       setCurrentSlide(-slidesToScroll)
+      // magic for infinite slider:
       setTimeout(() => {
         setTransition(0)
         setCurrentSlide(lastSlide)
@@ -46,26 +51,27 @@ const Slider = ({ children, className }: Props) => {
         }, 50)
       }, 500)
     } else {
-      if (slide - lastSlide > 0 && slide - lastSlide < slidesToScroll)
+      if (slide > lastSlide && slide < lastSlide + slidesToScroll)
         setCurrentSlide(lastSlide)
-      else if (slide % slidesToScroll) {
-        const nextSlide = slide - (slide % slidesToScroll) + slidesToScroll
-        setCurrentSlide(nextSlide)
-      } else setCurrentSlide(slide)
-      setTimeout(() => setLocked(false), 500)
+      else if (slide % slidesToScroll)
+        setCurrentSlide(slide - (slide % slidesToScroll) + slidesToScroll)
+      else setCurrentSlide(slide)
+      setTimeout(() => setLocked(false), 500) // release mutex
     }
   }
 
-  // Carrossel deslizante:
+  // sliding on touch:
   const [startX, setStartX] = useState(0)
   const [x, setX] = useState(0)
   const ref = useRef<HTMLDivElement>()
 
   useEffect(() => {
     const wrapper = ref.current
+    // capture initial touching position:
     const onTouchStart = (e) => {
       const { clientX: x } = e.touches[0]
       setStartX(x)
+      setTransition(0) // avoid css transition
     }
     wrapper.addEventListener('touchstart', onTouchStart)
     return () => wrapper?.removeEventListener('touchstart', onTouchStart)
@@ -73,9 +79,9 @@ const Slider = ({ children, className }: Props) => {
 
   useEffect(() => {
     const wrapper = ref.current
+    // change slider position based on touching position:
     const onTouchMove = (e) => {
       const { clientX: x } = e.touches[0]
-      setTransition(0)
       setX(x - startX)
     }
     wrapper.addEventListener('touchmove', onTouchMove)
@@ -87,6 +93,7 @@ const Slider = ({ children, className }: Props) => {
     const onTouchEnd = () => {
       setTransition(0.5)
       const threshold = x / wrapper.offsetWidth
+      // move on to the next/prev slide based on the threshold
       if (threshold <= -0.33) goToSlide(currentSlide + 1)
       else if (threshold >= 0.33) goToSlide(currentSlide - 1)
       setX(0)
@@ -94,8 +101,8 @@ const Slider = ({ children, className }: Props) => {
     wrapper.addEventListener('touchend', onTouchEnd)
     return () => wrapper?.removeEventListener('touchend', onTouchEnd)
   }, [currentSlide, x])
-  // Fim carrossel deslizante.
 
+  // clone somes slides to make it infinite:
   const slides = React.Children.toArray(children)
     .filter((_, index) => index >= slideCount - slidesToScroll)
     .concat(React.Children.toArray(children))
@@ -107,13 +114,13 @@ const Slider = ({ children, className }: Props) => {
 
   return (
     <div className={className} ref={ref}>
-      <div>
+      <div className="slider-and-controls">
         <button
-          onClick={() => goToSlide(currentSlide - 1)}
+          onClick={() => goToSlide(currentSlide - slidesToScroll)}
           className="arrow"
         ></button>
         <ul
-          className="track"
+          className={cn('track', st.track)}
           style={{
             transform: translateX(
               ref.current,
@@ -128,27 +135,25 @@ const Slider = ({ children, className }: Props) => {
           ))}
         </ul>
         <button
-          onClick={() => goToSlide(currentSlide + 1)}
+          onClick={() => goToSlide(currentSlide + slidesToScroll)}
           className="arrow"
         ></button>
       </div>
 
       <ul className="dots">
-        {Array(slideCount)
-          .fill(0)
-          .map((_, key) => (
-            <li
-              key={key}
-              className={cn({
-                active:
-                  key === currentSlide ||
-                  (key === 0 && currentSlide >= slideCount) ||
-                  (key === slideCount - slidesToScroll && currentSlide < 0),
-              })}
-            >
-              <button onClick={() => goToSlide(key)}>{key}</button>
-            </li>
-          ))}
+        {Array.from(Array(slideCount).keys()).map((_, key) => (
+          <li
+            key={key}
+            className={cn({
+              active:
+                key === currentSlide ||
+                (key === 0 && currentSlide >= slideCount) ||
+                (key === slideCount - slidesToScroll && currentSlide < 0),
+            })}
+          >
+            <button onClick={() => goToSlide(key)}>{key}</button>
+          </li>
+        ))}
       </ul>
     </div>
   )

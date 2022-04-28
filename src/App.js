@@ -1,25 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
+import './App.css'
+import Slider from './components/Slider.tsx'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Slider className="slider">
+      {Array.from(Array(6).keys()).map((_, key) => (
+        <div
+          className="slide"
+          style={{
+            backgroundImage:
+              'url(https://www.cameraegg.org/wp-content/uploads/2015/06/canon-powershot-g3-x-sample-images-1.jpg)',
+          }}
+          key={key}
+        ></div>
+      ))}
+    </Slider>
+  )
 }
 
-export default App;
+export default App
