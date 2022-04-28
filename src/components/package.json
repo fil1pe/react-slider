@@ -1,0 +1,17 @@
+{
+  "name": "@fil1pe/react-slider",
+  "version": "0.1.0",
+  "description": "A slider component for React",
+  "keywords": [
+    "slider",
+    "react"
+  ],
+  "main": "Slider.tsx",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "peerDependencies": {
+    "classnames": "^2.3.1",
+    "react": "^18.1.0"
+  }
+}
