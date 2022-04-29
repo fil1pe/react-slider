@@ -1,21 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react'
-import styled from 'styled-components'
+import React, { useState } from 'react'
+import useTouch from './useTouch'
+import Track from './Track'
+import translateX from './translateX'
 import cn from 'classnames'
-
-const Track = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-`
-
-// position the slider:
-function translateX(ref: HTMLDivElement, slide: number, offset: number) {
-  if (!ref) return `translateX(${slide * -100}%)`
-  return `translateX(${
-    -slide * ref.querySelector('li').offsetWidth + offset
-  }px)`
-}
 
 // component settings:
 type Props = {
@@ -68,46 +55,7 @@ const Slider = ({ children, className }: Props) => {
   }
 
   // sliding on touch:
-  const [startX, setStartX] = useState(0)
-  const [x, setX] = useState(0)
-  const ref = useRef<HTMLDivElement>()
-
-  useEffect(() => {
-    const wrapper = ref.current
-    // capture initial touching position:
-    const onTouchStart = (e) => {
-      const { clientX: x } = e.touches[0]
-      setStartX(x)
-      setTransition(0) // avoid css transition
-    }
-    wrapper.addEventListener('touchstart', onTouchStart)
-    return () => wrapper?.removeEventListener('touchstart', onTouchStart)
-  }, [])
-
-  useEffect(() => {
-    const wrapper = ref.current
-    // change slider position based on touching position:
-    const onTouchMove = (e) => {
-      const { clientX: x } = e.touches[0]
-      setX(x - startX)
-    }
-    wrapper.addEventListener('touchmove', onTouchMove)
-    return () => wrapper?.removeEventListener('touchmove', onTouchMove)
-  }, [startX])
-
-  useEffect(() => {
-    const wrapper = ref.current
-    const onTouchEnd = () => {
-      setTransition(0.5)
-      const threshold = x / wrapper.offsetWidth
-      // move on to the next/prev slide based on the threshold
-      if (threshold <= -0.33) goToSlide(currentSlide + 1)
-      else if (threshold >= 0.33) goToSlide(currentSlide - 1)
-      setX(0)
-    }
-    wrapper.addEventListener('touchend', onTouchEnd)
-    return () => wrapper?.removeEventListener('touchend', onTouchEnd)
-  }, [currentSlide, x])
+  const { ref, x } = useTouch(currentSlide, goToSlide, setTransition)
 
   // clone somes slides to make it infinite:
   const slides = React.Children.toArray(children)
