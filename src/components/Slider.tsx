@@ -45,8 +45,7 @@ const Slider = ({ children, className }: Props) => {
         }, 50)
       }, 500)
     } else {
-      if (slide > lastSlide && slide < lastSlide + slidesToScroll)
-        setCurrentSlide(lastSlide)
+      if (slide > lastSlide) setCurrentSlide(lastSlide)
       else if (slide % slidesToScroll)
         setCurrentSlide(slide - (slide % slidesToScroll) + slidesToScroll)
       else setCurrentSlide(slide)
@@ -74,21 +73,23 @@ const Slider = ({ children, className }: Props) => {
           onClick={() => goToSlide(currentSlide - slidesToScroll)}
           className="arrow"
         ></button>
-        <Track
-          className="track"
-          style={{
-            transform: translateX(
-              ref.current,
-              currentSlide + slidesToScroll,
-              x
-            ),
-            transitionDuration: Boolean(transition) && `${transition}s`,
-          }}
-        >
-          {React.Children.map(slides, (slide, key) => (
-            <li key={key}>{slide}</li>
-          ))}
-        </Track>
+        <div className="slider">
+          <Track
+            className="track"
+            style={{
+              transform: translateX(
+                ref.current,
+                currentSlide + slidesToScroll,
+                x
+              ),
+              transitionDuration: Boolean(transition) && `${transition}s`,
+            }}
+          >
+            {React.Children.map(slides, (slide, key) => (
+              <li key={key}>{slide}</li>
+            ))}
+          </Track>
+        </div>
         <button
           onClick={() => goToSlide(currentSlide + slidesToScroll)}
           className="arrow"
