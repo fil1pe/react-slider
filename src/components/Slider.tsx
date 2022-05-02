@@ -7,13 +7,14 @@ import cn from 'classnames'
 // component settings:
 type Props = {
   children: React.ReactNode
+  slidesToShow?: number // number of slides per page
   className: string
 }
 
-const Slider = ({ children, className }: Props) => {
+const Slider = ({ children, slidesToShow = 1, className }: Props) => {
   const [locked, setLocked] = useState(false) // mutex
 
-  const slidesToScroll = 1 // number of slides to scroll on click on prev/next
+  const slidesToScroll = slidesToShow // number of slides to scroll on click on prev/next
   const slideCount = React.Children.count(children) // total number of slides
   const lastSlide = slideCount - slidesToScroll
   const [transition, setTransition] = useState<number>(0.5) // transition duration
@@ -45,7 +46,7 @@ const Slider = ({ children, className }: Props) => {
         }, 50)
       }, 500)
     } else {
-      if (slide > lastSlide) setCurrentSlide(lastSlide)
+      if (slide >= lastSlide) setCurrentSlide(lastSlide)
       else if (slide % slidesToScroll)
         setCurrentSlide(slide - (slide % slidesToScroll) + slidesToScroll)
       else setCurrentSlide(slide)
@@ -66,6 +67,8 @@ const Slider = ({ children, className }: Props) => {
       )
     )
 
+  const dotCount = Math.ceil(slideCount / slidesToShow) // number of dots
+
   return (
     <div className={className} ref={ref}>
       <div className="slider-and-controls">
@@ -80,7 +83,8 @@ const Slider = ({ children, className }: Props) => {
               transform: translateX(
                 ref.current,
                 currentSlide + slidesToScroll,
-                x
+                x,
+                slidesToShow
               ),
               transitionDuration: Boolean(transition) && `${transition}s`,
             }}
@@ -97,17 +101,24 @@ const Slider = ({ children, className }: Props) => {
       </div>
 
       <ul className="dots">
-        {Array.from(Array(slideCount).keys()).map((_, key) => (
+        {Array.from(Array(dotCount).keys()).map((_, key) => (
           <li
             key={key}
             className={cn({
               active:
-                key === currentSlide ||
+                key * slidesToShow === currentSlide ||
                 (key === 0 && currentSlide >= slideCount) ||
-                (key === slideCount - slidesToScroll && currentSlide < 0),
+                (key === dotCount - 1 && currentSlide === lastSlide) ||
+                (key === dotCount - 1 && currentSlide < 0),
             })}
           >
-            <button onClick={() => goToSlide(key)}>{key}</button>
+            <button
+              onClick={() =>
+                goToSlide(key === dotCount - 1 ? lastSlide : key * slidesToShow)
+              }
+            >
+              {key}
+            </button>
           </li>
         ))}
       </ul>

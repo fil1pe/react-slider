@@ -1,6 +1,11 @@
 // position the slider:
-function translateX(ref: HTMLDivElement | null, slide: number, offset: number) {
-  if (!ref) return `translateX(${slide * -100}%)`
+function translateX(
+  ref: HTMLDivElement | null,
+  slide: number,
+  offset: number,
+  slidesToShow: number
+) {
+  if (!ref) return `translateX(${(slide * -100) / slidesToShow}%)`
   return `translateX(${
     -slide * (ref.querySelector('li')?.offsetWidth || 0) + offset
   }px)`
