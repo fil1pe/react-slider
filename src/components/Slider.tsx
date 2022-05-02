@@ -8,10 +8,11 @@ import cn from 'classnames'
 type Props = {
   children: React.ReactNode
   slidesToShow?: number // number of slides per page
+  finite?: boolean
   className: string
 }
 
-const Slider = ({ children, slidesToShow = 1, className }: Props) => {
+const Slider = ({ children, slidesToShow = 1, finite, className }: Props) => {
   const [locked, setLocked] = useState(false) // mutex
 
   const slidesToScroll = slidesToShow // number of slides to scroll on click on prev/next
@@ -24,6 +25,10 @@ const Slider = ({ children, slidesToShow = 1, className }: Props) => {
     if (locked) return
     setLocked(true)
     if (slide >= slideCount) {
+      if (finite) {
+        setCurrentSlide(lastSlide)
+        return setTimeout(() => setLocked(false), 500)
+      }
       setCurrentSlide(slideCount)
       // magic for infinite slider:
       setTimeout(() => {
@@ -35,6 +40,10 @@ const Slider = ({ children, slidesToShow = 1, className }: Props) => {
         }, 50)
       }, 500)
     } else if (slide < 0) {
+      if (finite) {
+        setCurrentSlide(0)
+        return setTimeout(() => setLocked(false), 500)
+      }
       setCurrentSlide(-slidesToScroll)
       // magic for infinite slider:
       setTimeout(() => {
@@ -74,7 +83,7 @@ const Slider = ({ children, slidesToShow = 1, className }: Props) => {
       <div className="slider-and-controls">
         <button
           onClick={() => goToSlide(currentSlide - slidesToScroll)}
-          className="arrow"
+          className={cn('arrow', finite && currentSlide === 0 && 'disabled')}
         ></button>
         <div className="slider">
           <Track
@@ -96,7 +105,10 @@ const Slider = ({ children, slidesToShow = 1, className }: Props) => {
         </div>
         <button
           onClick={() => goToSlide(currentSlide + slidesToScroll)}
-          className="arrow"
+          className={cn(
+            'arrow',
+            finite && currentSlide === lastSlide && 'disabled'
+          )}
         ></button>
       </div>
 
