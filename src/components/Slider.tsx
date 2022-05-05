@@ -92,7 +92,7 @@ const Slider = ({
           onClick={() => goToSlide(currentSlide - slidesToScroll)}
           className={cn('arrow', finite && currentSlide === 0 && 'disabled')}
         ></button>
-        <div className="slider">
+        <div className="slides">
           <Track
             className="track"
             style={{
