@@ -8,14 +8,20 @@ import cn from 'classnames'
 type Props = {
   children: React.ReactNode
   slidesToShow?: number // number of slides per page
+  slidesToScroll?: number // number of slides to scroll on click on prev/next
   finite?: boolean
   className: string
 }
 
-const Slider = ({ children, slidesToShow = 1, finite, className }: Props) => {
+const Slider = ({
+  children,
+  slidesToShow = 1,
+  slidesToScroll = slidesToShow,
+  finite,
+  className,
+}: Props) => {
   const [locked, setLocked] = useState(false) // mutex
 
-  const slidesToScroll = slidesToShow // number of slides to scroll on click on prev/next
   const slideCount = React.Children.count(children) // total number of slides
   const lastSlide = slideCount - slidesToScroll
   const [transition, setTransition] = useState<number>(0.5) // transition duration
@@ -66,17 +72,18 @@ const Slider = ({ children, slidesToShow = 1, finite, className }: Props) => {
   // sliding on touch:
   const { ref, x } = useTouch(currentSlide, goToSlide, setTransition)
 
-  // clone somes slides to make it infinite:
+  // clone some slides to make it infinite:
   const slides = React.Children.toArray(children)
-    .filter((_, index) => index >= slideCount - slidesToScroll)
+    .filter((_, index) => index >= slideCount - slidesToShow)
     .concat(React.Children.toArray(children))
     .concat(
       React.Children.toArray(children).filter(
-        (_, index) => index < slidesToScroll
+        (_, index) => index < slidesToShow
       )
     )
 
-  const dotCount = Math.ceil(slideCount / slidesToShow) // number of dots
+  // number of dots:
+  const dotCount = Math.ceil(slideCount / slidesToScroll) // number of dots
 
   return (
     <div className={className} ref={ref}>
@@ -91,7 +98,7 @@ const Slider = ({ children, slidesToShow = 1, finite, className }: Props) => {
             style={{
               transform: translateX(
                 ref.current,
-                currentSlide + slidesToScroll,
+                currentSlide + slidesToShow,
                 x,
                 slidesToShow
               ),
@@ -118,7 +125,7 @@ const Slider = ({ children, slidesToShow = 1, finite, className }: Props) => {
             key={key}
             className={cn({
               active:
-                key * slidesToShow === currentSlide ||
+                key * slidesToScroll === currentSlide ||
                 (key === 0 && currentSlide >= slideCount) ||
                 (key === dotCount - 1 && currentSlide === lastSlide) ||
                 (key === dotCount - 1 && currentSlide < 0),
@@ -126,7 +133,9 @@ const Slider = ({ children, slidesToShow = 1, finite, className }: Props) => {
           >
             <button
               onClick={() =>
-                goToSlide(key === dotCount - 1 ? lastSlide : key * slidesToShow)
+                goToSlide(
+                  key === dotCount - 1 ? lastSlide : key * slidesToScroll
+                )
               }
             >
               {key}

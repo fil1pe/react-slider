@@ -1,15 +1,16 @@
 import './App.css'
 import Slider from './components/Slider.tsx'
 
+const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet']
+
 function App() {
   return (
-    <Slider className="slider">
-      {Array.from(Array(6).keys()).map((_, key) => (
+    <Slider className="example-slider" slidesToShow={2} slidesToScroll={1}>
+      {colors.map((color, key) => (
         <div
           className="slide"
           style={{
-            backgroundImage:
-              'url(https://www.cameraegg.org/wp-content/uploads/2015/06/canon-powershot-g3-x-sample-images-1.jpg)',
+            background: color,
           }}
           key={key}
         ></div>
