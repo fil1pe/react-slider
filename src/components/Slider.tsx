@@ -11,6 +11,12 @@ type Props = {
   slidesToScroll?: number // number of slides to scroll on click on prev/next
   finite?: boolean
   className: string
+  renderArrow?: (
+    props: React.DetailedHTMLProps<
+      React.ButtonHTMLAttributes<HTMLButtonElement>,
+      HTMLButtonElement
+    >
+  ) => React.ReactElement
 }
 
 const Slider = ({
@@ -19,6 +25,7 @@ const Slider = ({
   slidesToScroll = slidesToShow,
   finite,
   className,
+  renderArrow: Arrow = (props) => <button {...props}></button>,
 }: Props) => {
   const [locked, setLocked] = useState(false) // mutex
 
@@ -87,14 +94,13 @@ const Slider = ({
 
   return (
     <div className={className} ref={ref}>
-      <div className="slider-and-controls">
-        <button
+      <div className="main">
+        <Arrow
           onClick={() => goToSlide(currentSlide - slidesToScroll)}
           className={cn('arrow', finite && currentSlide === 0 && 'disabled')}
-        ></button>
-        <div className="slides">
+        />
+        <div className="track">
           <Track
-            className="track"
             style={{
               transform: translateX(
                 ref.current,
@@ -110,13 +116,13 @@ const Slider = ({
             ))}
           </Track>
         </div>
-        <button
+        <Arrow
           onClick={() => goToSlide(currentSlide + slidesToScroll)}
           className={cn(
             'arrow',
             finite && currentSlide === lastSlide && 'disabled'
           )}
-        ></button>
+        />
       </div>
 
       <ul className="dots">

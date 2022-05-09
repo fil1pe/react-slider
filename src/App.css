@@ -20,13 +20,13 @@ body {
   position: relative;
 }
 
-.example-slider .slider-and-controls {
+.example-slider .main {
   overflow: hidden;
   border-radius: 30px;
   position: relative;
 }
 
-.example-slider .track > * {
+.example-slider .track > ul > * {
   flex: 0 0 50%;
 }
 

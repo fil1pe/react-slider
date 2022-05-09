@@ -21,7 +21,7 @@ $ yarn add @fil1pe/react-slider
 In your JSX file, import the slider component and add at least the prop className. In order for it to work, you must set some styles in your stylesheet file (you may use [CSS-modules](https://github.com/css-modules/css-modules) with global selectors). The track children width is one you must write. For example, if you'd like to show only one slide per page, this must be set:
 
 ```css
-.slider .track > * {
+.slider .track > ul > * {
   flex: 0 0 100%;
 }
 ```
@@ -29,7 +29,7 @@ In your JSX file, import the slider component and add at least the prop classNam
 For two slides per page:
 
 ```css
-.slider .track > * {
+.slider .track > ul > * {
   flex: 0 0 50%;
 }
 ```
@@ -44,22 +44,20 @@ And so on. Also remember to put that number of slides into the prop slidesToShow
 | slidesToShow | 1 | false | Number of slides per page |
 | slidesToScroll | slidesToShow | false | Number of slides to scroll on click on prev/next |
 | finite | false | false | Defines whether the slider should have finite scrolling or not |
+| renderArrow | `(props) => <button {...props}></button>` | false | Allows customizing the arrow buttons |
 
 ## Classes
 
 | Class name | Description |
 | :-: | :-: |
-| .slider-and-controls | div wrapping the slider and controls (prev/next arrows) |
+| .main | div wrapping the track and arrows |
 | .arrow | prev¹/next² button |
 | .disabled | if arrow is disabled |
-| .slides | wraps the slider track |
-| .track | ul containing the slides |
+| .track | wraps the ul containing the slides |
 | .dots | ul with the dots |
-| .active | the active dot |
+| .active | active dot |
 
-¹:first-child
-
-²:last-child
+¹:first-child ²:last-child
 
 ## Example
 
