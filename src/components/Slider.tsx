@@ -77,15 +77,20 @@ const Slider = ({
   }
 
   // sliding on touch:
-  const { ref, x } = useTouch(currentSlide, goToSlide, setTransition)
+  const { ref, x } = useTouch(
+    currentSlide,
+    slidesToScroll,
+    goToSlide,
+    setTransition
+  )
 
   // clone some slides to make it infinite:
   const slides = React.Children.toArray(children)
-    .filter((_, index) => index >= slideCount - slidesToShow)
+    .filter((_, index) => !finite && index >= slideCount - slidesToShow)
     .concat(React.Children.toArray(children))
     .concat(
       React.Children.toArray(children).filter(
-        (_, index) => index < slidesToShow
+        (_, index) => !finite && index < slidesToShow
       )
     )
 
@@ -104,7 +109,7 @@ const Slider = ({
             style={{
               transform: translateX(
                 ref.current,
-                currentSlide + slidesToShow,
+                finite ? currentSlide : currentSlide + slidesToShow,
                 x,
                 slidesToShow
               ),

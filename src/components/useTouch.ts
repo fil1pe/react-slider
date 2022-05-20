@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 // handle sliding on touch:
 const useTouch = (
   currentSlide: number,
+  slidesToScroll: number,
   goToSlide: (slide: number) => void,
   setTransition: React.Dispatch<React.SetStateAction<number>> // set transition duration
 ) => {
@@ -39,8 +40,8 @@ const useTouch = (
       setTransition(0.5)
       const threshold = x / (wrapper?.offsetWidth || 1)
       // move on to the next/prev slide based on the threshold
-      if (threshold <= -0.33) goToSlide(currentSlide + 1)
-      else if (threshold >= 0.33) goToSlide(currentSlide - 1)
+      if (threshold <= -0.33) goToSlide(currentSlide + slidesToScroll)
+      else if (threshold >= 0.33) goToSlide(currentSlide - slidesToScroll)
       setX(0)
     }
     wrapper?.addEventListener('touchend', onTouchEnd)
