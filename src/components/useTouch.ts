@@ -15,6 +15,7 @@ const useTouch = (
     const wrapper = ref.current
     // capture initial touching position:
     const onTouchStart = (e: TouchEvent) => {
+      if ((e.target as HTMLElement).tagName === 'BUTTON') return
       const { clientX: x } = e.touches[0]
       setStartX(x)
       setTransition(0) // avoid css transition
