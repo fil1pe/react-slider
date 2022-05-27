@@ -35,7 +35,7 @@ const Slider = ({
   const [currentSlide, setCurrentSlide] = useState(0)
 
   const goToSlide = (slide: number) => {
-    if (locked) return
+    if (locked || slideCount <= slidesToShow) return
     setLocked(true)
     if (slide >= slideCount) {
       if (finite) {
@@ -85,13 +85,20 @@ const Slider = ({
   )
 
   // clone some slides to make it infinite:
-  const slides = React.Children.toArray(children)
-    .filter((_, index) => !finite && index >= slideCount - slidesToShow)
+  const slides = (
+    !finite && slideCount > slidesToShow
+      ? React.Children.toArray(children).filter(
+          (_, index) => index >= slideCount - slidesToShow
+        )
+      : []
+  )
     .concat(React.Children.toArray(children))
     .concat(
-      React.Children.toArray(children).filter(
-        (_, index) => !finite && index < slidesToShow
-      )
+      !finite && slideCount > slidesToShow
+        ? React.Children.toArray(children).filter(
+            (_, index) => index < slidesToShow
+          )
+        : []
     )
 
   // number of dots:
@@ -100,60 +107,69 @@ const Slider = ({
   return (
     <div className={className} ref={ref}>
       <div className="main">
-        <Arrow
-          onClick={() => goToSlide(currentSlide - slidesToScroll)}
-          className={cn('arrow', finite && currentSlide === 0 && 'disabled')}
-        />
+        {slideCount > slidesToShow && (
+          <Arrow
+            onClick={() => goToSlide(currentSlide - slidesToScroll)}
+            className={cn('arrow', finite && currentSlide === 0 && 'disabled')}
+          />
+        )}
         <div className="track">
           <Track
             style={{
               transform: translateX(
                 ref.current,
-                finite ? currentSlide : currentSlide + slidesToShow,
+                finite || slideCount <= slidesToShow
+                  ? currentSlide
+                  : currentSlide + slidesToShow,
                 x,
                 slidesToShow
               ),
               transitionDuration: Boolean(transition) && `${transition}s`,
             }}
+            center={slideCount <= slidesToShow}
           >
             {React.Children.map(slides, (slide, key) => (
               <li key={key}>{slide}</li>
             ))}
           </Track>
         </div>
-        <Arrow
-          onClick={() => goToSlide(currentSlide + slidesToScroll)}
-          className={cn(
-            'arrow',
-            finite && currentSlide === lastSlide && 'disabled'
-          )}
-        />
+        {slideCount > slidesToShow && (
+          <Arrow
+            onClick={() => goToSlide(currentSlide + slidesToScroll)}
+            className={cn(
+              'arrow',
+              finite && currentSlide === lastSlide && 'disabled'
+            )}
+          />
+        )}
       </div>
 
-      <ul className="dots">
-        {Array.from(Array(dotCount).keys()).map((_, key) => (
-          <li
-            key={key}
-            className={cn({
-              active:
-                key * slidesToScroll === currentSlide ||
-                (key === 0 && currentSlide >= slideCount) ||
-                (key === dotCount - 1 && currentSlide === lastSlide) ||
-                (key === dotCount - 1 && currentSlide < 0),
-            })}
-          >
-            <button
-              onClick={() =>
-                goToSlide(
-                  key === dotCount - 1 ? lastSlide : key * slidesToScroll
-                )
-              }
+      {slideCount > slidesToShow && (
+        <ul className="dots">
+          {Array.from(Array(dotCount).keys()).map((_, key) => (
+            <li
+              key={key}
+              className={cn({
+                active:
+                  key * slidesToScroll === currentSlide ||
+                  (key === 0 && currentSlide >= slideCount) ||
+                  (key === dotCount - 1 && currentSlide === lastSlide) ||
+                  (key === dotCount - 1 && currentSlide < 0),
+              })}
             >
-              {key}
-            </button>
-          </li>
-        ))}
-      </ul>
+              <button
+                onClick={() =>
+                  goToSlide(
+                    key === dotCount - 1 ? lastSlide : key * slidesToScroll
+                  )
+                }
+              >
+                {key}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
