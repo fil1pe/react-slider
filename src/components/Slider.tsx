@@ -1,8 +1,22 @@
 import React, { useState } from 'react'
 import useTouch from './useTouch'
-import Track from './Track'
 import translateX from './translateX'
+import Track from './Track'
+import TrackWrapper from './TrackWrapper'
+import Dots from './Dots'
 import cn from 'classnames'
+
+// arrow type enum
+export enum ArrowType {
+  Prev,
+  Next,
+}
+
+// arrow html props
+type ArrowProps = React.DetailedHTMLProps<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+>
 
 // component settings:
 type Props = {
@@ -10,13 +24,8 @@ type Props = {
   slidesToShow?: number // number of slides per page
   slidesToScroll?: number // number of slides to scroll on click on prev/next
   finite?: boolean
-  className: string
-  renderArrow?: (
-    props: React.DetailedHTMLProps<
-      React.ButtonHTMLAttributes<HTMLButtonElement>,
-      HTMLButtonElement
-    >
-  ) => React.ReactElement
+  className?: string
+  renderArrow?: (props: ArrowProps, type?: ArrowType) => React.ReactElement
 }
 
 const Slider = ({
@@ -25,8 +34,13 @@ const Slider = ({
   slidesToScroll = slidesToShow,
   finite,
   className,
-  renderArrow: Arrow = (props) => <button {...props}></button>,
+  renderArrow: Arrow = (props, type) => (
+    <button {...props}>{type === ArrowType.Next ? 'Next' : 'Previous'}</button>
+  ),
 }: Props) => {
+  const NextArrow = (props: ArrowProps) => Arrow(props, ArrowType.Next)
+  const PrevArrow = (props: ArrowProps) => Arrow(props, ArrowType.Prev)
+
   const [locked, setLocked] = useState(false) // mutex
 
   const slideCount = React.Children.count(children) // total number of slides
@@ -108,12 +122,12 @@ const Slider = ({
     <div className={className} ref={ref}>
       <div className="main">
         {slideCount > slidesToShow && (
-          <Arrow
+          <PrevArrow
             onClick={() => goToSlide(currentSlide - slidesToScroll)}
             className={cn('arrow', finite && currentSlide === 0 && 'disabled')}
           />
         )}
-        <div className="track">
+        <TrackWrapper className="track">
           <Track
             style={{
               transform: translateX(
@@ -127,14 +141,15 @@ const Slider = ({
               transitionDuration: Boolean(transition) && `${transition}s`,
             }}
             center={slideCount <= slidesToShow}
+            slidesPerPage={slidesToShow}
           >
             {React.Children.map(slides, (slide, key) => (
               <li key={key}>{slide}</li>
             ))}
           </Track>
-        </div>
+        </TrackWrapper>
         {slideCount > slidesToShow && (
-          <Arrow
+          <NextArrow
             onClick={() => goToSlide(currentSlide + slidesToScroll)}
             className={cn(
               'arrow',
@@ -145,7 +160,7 @@ const Slider = ({
       </div>
 
       {slideCount > slidesToShow && (
-        <ul className="dots">
+        <Dots className="dots">
           {Array.from(Array(dotCount).keys()).map((_, key) => (
             <li
               key={key}
@@ -168,7 +183,7 @@ const Slider = ({
               </button>
             </li>
           ))}
-        </ul>
+        </Dots>
       )}
     </div>
   )

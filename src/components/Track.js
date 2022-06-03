@@ -6,8 +6,14 @@ const Track = styled.ul`
   padding: 0;
   margin: 0;
   display: flex;
-  ${props => props.center && css`
-    justify-content: center;
+  ${(props) => props.center &&
+    css`
+      justify-content: center;
+    `}
+  ${(props) => css`
+    > li {
+      flex: 0 0 ${100 / props.slidesPerPage}%;
+    }
   `}
 `
 
