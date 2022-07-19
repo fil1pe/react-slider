@@ -40,6 +40,7 @@ In your JSX file, import the slider component as in the [example below](#example
 | slidesToScroll | slidesToShow | false | Number of slides to scroll on click on prev/next |
 | finite | false | false | Defines whether the slider should have finite scrolling or not |
 | renderArrow | `(props, type) => <button {...props}>{type === ArrowType.Next ? 'Next' : 'Previous'}</button>` | false | Allows customizing the arrow buttons |
+| autoplayTimeout | none (∞) | false | Autoplay interval in milliseconds |
 
 ## Example
 

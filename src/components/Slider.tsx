@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useTouch from './useTouch'
 import translateX from './translateX'
 import Track from './Track'
@@ -26,6 +26,7 @@ type Props = {
   finite?: boolean
   className?: string
   renderArrow?: (props: ArrowProps, type?: ArrowType) => React.ReactElement
+  autoplayTimeout?: number // autoplay interval in ms
 }
 
 const Slider = ({
@@ -37,6 +38,7 @@ const Slider = ({
   renderArrow: Arrow = (props, type) => (
     <button {...props}>{type === ArrowType.Next ? 'Next' : 'Previous'}</button>
   ),
+  autoplayTimeout,
 }: Props) => {
   const NextArrow = (props: ArrowProps) => Arrow(props, ArrowType.Next)
   const PrevArrow = (props: ArrowProps) => Arrow(props, ArrowType.Prev)
@@ -89,6 +91,17 @@ const Slider = ({
       setTimeout(() => setLocked(false), 500) // release mutex
     }
   }
+
+  // autoplay:
+  useEffect(() => {
+    if (autoplayTimeout) {
+      const intervalId = setInterval(
+        () => goToSlide(currentSlide + slidesToScroll),
+        autoplayTimeout
+      )
+      return () => clearInterval(intervalId)
+    }
+  }, [autoplayTimeout, goToSlide])
 
   // sliding on touch:
   const { ref, x } = useTouch(
