@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import useTouch from './useTouch'
+import append, { prepend } from './append'
 import translateX from './translateX'
 import Track from './Track'
 import TrackWrapper from './TrackWrapper'
@@ -23,6 +24,7 @@ type Props = {
   children: React.ReactNode
   slidesToShow?: number // number of slides per page
   slidesToScroll?: number // number of slides to scroll on click on prev/next
+  slidesToAppend?: number // additional number of slides to append before and after
   finite?: boolean
   className?: string
   renderArrow?: (props: ArrowProps, type?: ArrowType) => React.ReactElement
@@ -33,6 +35,7 @@ const Slider = ({
   children,
   slidesToShow = 1,
   slidesToScroll = slidesToShow,
+  slidesToAppend = 0,
   finite,
   className,
   renderArrow: Arrow = (props, type) => (
@@ -113,17 +116,16 @@ const Slider = ({
 
   // clone some slides to make it infinite:
   const slides = (
-    !finite && slideCount > slidesToShow
-      ? React.Children.toArray(children).filter(
-          (_, index) => index >= slideCount - slidesToShow
-        )
+    (!finite || slidesToAppend) && slideCount > slidesToShow
+      ? prepend(React.Children.toArray(children), slidesToShow + slidesToAppend)
       : []
   )
     .concat(React.Children.toArray(children))
     .concat(
-      !finite && slideCount > slidesToShow
-        ? React.Children.toArray(children).filter(
-            (_, index) => index < slidesToShow
+      (!finite || slidesToAppend) && slideCount > slidesToShow
+        ? append(
+            React.Children.toArray(children),
+            slidesToShow + slidesToAppend
           )
         : []
     )
@@ -145,9 +147,9 @@ const Slider = ({
             style={{
               transform: translateX(
                 ref.current,
-                finite || slideCount <= slidesToShow
+                (finite && !slidesToAppend) || slideCount <= slidesToShow
                   ? currentSlide
-                  : currentSlide + slidesToShow,
+                  : currentSlide + slidesToShow + slidesToAppend,
                 x,
                 slidesToShow
               ),
