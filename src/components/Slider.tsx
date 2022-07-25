@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import useTouch from './useTouch'
 import append, { prepend } from './append'
 import translateX from './translateX'
@@ -29,6 +29,7 @@ type Props = {
   className?: string
   renderArrow?: (props: ArrowProps, type?: ArrowType) => React.ReactElement
   autoplayTimeout?: number // autoplay interval in ms
+  adaptiveHeight?: boolean
 }
 
 const Slider = ({
@@ -42,6 +43,7 @@ const Slider = ({
     <button {...props}>{type === ArrowType.Next ? 'Next' : 'Previous'}</button>
   ),
   autoplayTimeout,
+  adaptiveHeight,
 }: Props) => {
   const NextArrow = (props: ArrowProps) => Arrow(props, ArrowType.Next)
   const PrevArrow = (props: ArrowProps) => Arrow(props, ArrowType.Prev)
@@ -133,6 +135,13 @@ const Slider = ({
   // number of dots:
   const dotCount = Math.ceil(slideCount / slidesToScroll) // number of dots
 
+  // adaptive height:
+  const currentSlideRef = useRef<HTMLLIElement>(null)
+  const [height, setHeight] = useState(0)
+  useEffect(() => {
+    if (adaptiveHeight) setHeight(currentSlideRef.current?.offsetHeight || 0)
+  }, [adaptiveHeight, currentSlide])
+
   return (
     <div className={className} ref={ref}>
       <div className="main">
@@ -142,7 +151,14 @@ const Slider = ({
             className={cn('arrow', finite && currentSlide === 0 && 'disabled')}
           />
         )}
-        <TrackWrapper className="track">
+        <TrackWrapper
+          className="track"
+          style={{
+            height: Boolean(adaptiveHeight && height)
+              ? `${height}px`
+              : undefined,
+          }}
+        >
           <Track
             style={{
               transform: translateX(
@@ -153,13 +169,28 @@ const Slider = ({
                 x,
                 slidesToShow
               ),
-              transitionDuration: Boolean(transition) && `${transition}s`,
+              transitionDuration: Boolean(transition)
+                ? `${transition}s`
+                : undefined,
             }}
             center={slideCount <= slidesToShow}
             slidesPerPage={slidesToShow}
+            adaptiveHeight={adaptiveHeight}
           >
             {React.Children.map(slides, (slide, key) => (
-              <li key={key}>{slide}</li>
+              <li
+                key={key}
+                ref={
+                  key ===
+                  ((finite && !slidesToAppend) || slideCount <= slidesToShow
+                    ? currentSlide
+                    : currentSlide + slidesToShow + slidesToAppend)
+                    ? currentSlideRef
+                    : undefined
+                }
+              >
+                {slide}
+              </li>
             ))}
           </Track>
         </TrackWrapper>

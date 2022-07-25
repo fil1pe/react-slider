@@ -42,6 +42,7 @@ In your JSX file, import the slider component as in the [example below](#example
 | renderArrow | `(props, type) => <button {...props}>{type === ArrowType.Next ? 'Next' : 'Previous'}</button>` | false | Allows customizing the arrow buttons |
 | autoplayTimeout | none (∞) | false | Autoplay interval in milliseconds |
 | slidesToAppend | none | false | Additional number of slides to append before and after |
+| adaptiveHeight | false | false | Variable height |
 
 ## Example
 
