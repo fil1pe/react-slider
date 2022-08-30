@@ -45,9 +45,6 @@ const Slider = ({
   autoplayTimeout,
   adaptiveHeight,
 }: Props) => {
-  const NextArrow = (props: ArrowProps) => Arrow(props, ArrowType.Next)
-  const PrevArrow = (props: ArrowProps) => Arrow(props, ArrowType.Prev)
-
   const [locked, setLocked] = useState(false) // mutex
 
   const slideCount = React.Children.count(children) // total number of slides
@@ -145,12 +142,17 @@ const Slider = ({
   return (
     <div className={className} ref={ref}>
       <div className="main">
-        {slideCount > slidesToShow && (
-          <PrevArrow
-            onClick={() => goToSlide(currentSlide - slidesToScroll)}
-            className={cn('arrow', finite && currentSlide === 0 && 'disabled')}
-          />
-        )}
+        {slideCount > slidesToShow &&
+          Arrow(
+            {
+              onClick: () => goToSlide(currentSlide - slidesToScroll),
+              className: cn(
+                'arrow',
+                finite && currentSlide === 0 && 'disabled'
+              ),
+            },
+            ArrowType.Prev
+          )}
         <TrackWrapper
           className="track"
           style={{
@@ -194,15 +196,17 @@ const Slider = ({
             ))}
           </Track>
         </TrackWrapper>
-        {slideCount > slidesToShow && (
-          <NextArrow
-            onClick={() => goToSlide(currentSlide + slidesToScroll)}
-            className={cn(
-              'arrow',
-              finite && currentSlide === lastSlide && 'disabled'
-            )}
-          />
-        )}
+        {slideCount > slidesToShow &&
+          Arrow(
+            {
+              onClick: () => goToSlide(currentSlide + slidesToScroll),
+              className: cn(
+                'arrow',
+                finite && currentSlide === lastSlide && 'disabled'
+              ),
+            },
+            ArrowType.Next
+          )}
       </div>
 
       {slideCount > slidesToShow && (
