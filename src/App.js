@@ -15,6 +15,7 @@ function App() {
         slidesToScroll={1}
         autoplayTimeout={4000}
         ref={ref}
+        pagination={2}
       >
         {colors.map((color, key) => (
           <div

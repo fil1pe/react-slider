@@ -30,6 +30,7 @@ In your JSX file, import the slider component as in the [example below](#example
 | .track | wraps the ul containing the slides |
 | .dots | ul with the dots |
 | .active | active dot |
+| .pages | pagination info |
 
 ## Component props
 
@@ -43,6 +44,7 @@ In your JSX file, import the slider component as in the [example below](#example
 | autoplayTimeout | none (∞) | false | Autoplay interval in milliseconds |
 | slidesToAppend | none | false | Additional number of slides to append before and after |
 | adaptiveHeight | false | false | Variable height |
+| pagination | 0 | false | Shows current slide index alongside the total number of slides<br/>(1 for no spacing, 2 otherwise) |
 
 ## Methods
 

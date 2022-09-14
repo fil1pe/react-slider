@@ -19,3 +19,8 @@ body {
 .slide {
   padding-top: 100%;
 }
+
+.pages {
+  display: block;
+  text-align: center;
+}

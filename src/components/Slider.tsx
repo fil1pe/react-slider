@@ -36,6 +36,7 @@ type Props = {
   renderArrow?: (props: ArrowProps, type?: ArrowType) => React.ReactElement
   autoplayTimeout?: number // autoplay interval in ms
   adaptiveHeight?: boolean
+  pagination?: number // shows current slide index alongside the total number of slides
 }
 
 // exposed methods:
@@ -60,6 +61,7 @@ export default forwardRef<SliderRef, Props>(function Slider(
     ),
     autoplayTimeout,
     adaptiveHeight,
+    pagination = 0,
   },
   thisRef
 ) {
@@ -259,6 +261,18 @@ export default forwardRef<SliderRef, Props>(function Slider(
             </li>
           ))}
         </Dots>
+      )}
+
+      {Boolean(pagination) && (
+        <span className="pages">
+          {(currentSlide < 0
+            ? lastSlide
+            : currentSlide >= slideCount
+            ? 0
+            : currentSlide) + 1}
+          {pagination > 1 ? ' / ' : '/'}
+          {slideCount}
+        </span>
       )}
     </div>
   )
