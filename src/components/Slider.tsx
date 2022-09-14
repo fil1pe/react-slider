@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 import useTouch from './useTouch'
 import append, { prepend } from './append'
 import translateX from './translateX'
@@ -32,19 +38,31 @@ type Props = {
   adaptiveHeight?: boolean
 }
 
-const Slider = ({
-  children,
-  slidesToShow = 1,
-  slidesToScroll = slidesToShow,
-  slidesToAppend = 0,
-  finite,
-  className,
-  renderArrow: Arrow = (props, type) => (
-    <button {...props}>{type === ArrowType.Next ? 'Next' : 'Previous'}</button>
-  ),
-  autoplayTimeout,
-  adaptiveHeight,
-}: Props) => {
+// exposed methods:
+export type SliderRef = {
+  slickGoTo: (slide: number) => void
+  slickNext: () => void
+  slickPrev: () => void
+}
+
+export default forwardRef<SliderRef, Props>(function Slider(
+  {
+    children,
+    slidesToShow = 1,
+    slidesToScroll = slidesToShow,
+    slidesToAppend = 0,
+    finite,
+    className,
+    renderArrow: Arrow = (props, type) => (
+      <button {...props}>
+        {type === ArrowType.Next ? 'Next' : 'Previous'}
+      </button>
+    ),
+    autoplayTimeout,
+    adaptiveHeight,
+  },
+  thisRef
+) {
   const [locked, setLocked] = useState(false) // mutex
 
   const slideCount = React.Children.count(children) // total number of slides
@@ -138,6 +156,13 @@ const Slider = ({
   useEffect(() => {
     if (adaptiveHeight) setHeight(currentSlideRef.current?.offsetHeight || 0)
   }, [adaptiveHeight, currentSlide])
+
+  // expose some methods:
+  useImperativeHandle(thisRef, () => ({
+    slickGoTo: goToSlide,
+    slickNext: () => goToSlide(currentSlide - slidesToScroll),
+    slickPrev: () => goToSlide(currentSlide + slidesToScroll),
+  }))
 
   return (
     <div className={className} ref={ref}>
@@ -237,6 +262,4 @@ const Slider = ({
       )}
     </div>
   )
-}
-
-export default Slider
+})

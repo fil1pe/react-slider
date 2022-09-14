@@ -44,6 +44,16 @@ In your JSX file, import the slider component as in the [example below](#example
 | slidesToAppend | none | false | Additional number of slides to append before and after |
 | adaptiveHeight | false | false | Variable height |
 
+## Methods
+
+Referencing the slider allows you to manually change the current slide through the methods below.
+
+| Method | Arguments | Description |
+| :-: | :-: | :-: |
+| slickGoTo | slide index | Navigates to the specified slide |
+| slickNext | none | Goes to the next slide |
+| slickPrev | none | Goes to the previous slide |
+
 ## Example
 
 ```js
