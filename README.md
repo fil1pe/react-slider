@@ -45,6 +45,7 @@ In your JSX file, import the slider component as in the [example below](#example
 | slidesToAppend | none | false | Additional number of slides to append before and after |
 | adaptiveHeight | false | false | Variable height |
 | pagination | 0 | false | Shows current slide index alongside the total number of slides<br/>(1 for no spacing, 2 otherwise) |
+| onSlideChange(int) | none | false | Function triggered on slide change |
 
 ## Methods
 

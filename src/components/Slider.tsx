@@ -37,6 +37,7 @@ type Props = {
   autoplayTimeout?: number // autoplay interval in ms
   adaptiveHeight?: boolean
   pagination?: number // shows current slide index alongside the total number of slides
+  onSlideChange?: (slide: number) => void
 }
 
 // exposed methods:
@@ -62,6 +63,7 @@ export default forwardRef<SliderRef, Props>(function Slider(
     autoplayTimeout,
     adaptiveHeight,
     pagination = 0,
+    onSlideChange,
   },
   thisRef
 ) {
@@ -78,9 +80,11 @@ export default forwardRef<SliderRef, Props>(function Slider(
     if (slide >= slideCount) {
       if (finite) {
         setCurrentSlide(lastSlide)
+        onSlideChange?.(lastSlide)
         return setTimeout(() => setLocked(false), 500)
       }
       setCurrentSlide(slideCount)
+      onSlideChange?.(0)
       // magic for infinite slider:
       setTimeout(() => {
         setTransition(0)
@@ -93,9 +97,11 @@ export default forwardRef<SliderRef, Props>(function Slider(
     } else if (slide < 0) {
       if (finite) {
         setCurrentSlide(0)
+        onSlideChange?.(0)
         return setTimeout(() => setLocked(false), 500)
       }
       setCurrentSlide(-slidesToScroll)
+      onSlideChange?.(lastSlide)
       // magic for infinite slider:
       setTimeout(() => {
         setTransition(0)
@@ -106,10 +112,11 @@ export default forwardRef<SliderRef, Props>(function Slider(
         }, 50)
       }, 500)
     } else {
-      if (slide >= lastSlide) setCurrentSlide(lastSlide)
+      if (slide >= lastSlide) slide = lastSlide
       else if (slide % slidesToScroll)
-        setCurrentSlide(slide - (slide % slidesToScroll) + slidesToScroll)
-      else setCurrentSlide(slide)
+        slide = slide - (slide % slidesToScroll) + slidesToScroll
+      setCurrentSlide(slide)
+      onSlideChange?.(slide)
       setTimeout(() => setLocked(false), 500) // release mutex
     }
   }
