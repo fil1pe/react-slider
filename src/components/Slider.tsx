@@ -164,7 +164,7 @@ export default forwardRef<SliderRef, Props>(function Slider(
   const [height, setHeight] = useState(0)
   useEffect(() => {
     if (adaptiveHeight) setHeight(currentSlideRef.current?.offsetHeight || 0)
-  }, [adaptiveHeight, currentSlide])
+  }, [adaptiveHeight, currentSlide, children])
 
   // expose some methods:
   useImperativeHandle(thisRef, () => ({
