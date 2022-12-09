@@ -26,7 +26,7 @@ type ArrowProps = React.DetailedHTMLProps<
 >
 
 // component settings:
-type Props = {
+type SliderProps = {
   children: React.ReactNode
   slidesToShow?: number // number of slides per page
   slidesToScroll?: number // number of slides to scroll on click on prev/next
@@ -34,6 +34,7 @@ type Props = {
   finite?: boolean
   className?: string
   renderArrow?: (props: ArrowProps, type?: ArrowType) => React.ReactElement
+  renderController?: (currentSlide: number) => React.ReactElement // additional controller
   autoplayTimeout?: number // autoplay interval in ms
   adaptiveHeight?: boolean
   pagination?: number // shows current slide index alongside the total number of slides
@@ -47,7 +48,7 @@ export type SliderRef = {
   slickPrev: () => void
 }
 
-export default forwardRef<SliderRef, Props>(function Slider(
+export default forwardRef<SliderRef, SliderProps>(function Slider(
   {
     children,
     slidesToShow = 1,
@@ -60,6 +61,7 @@ export default forwardRef<SliderRef, Props>(function Slider(
         {type === ArrowType.Next ? 'Next' : 'Previous'}
       </button>
     ),
+    renderController,
     autoplayTimeout,
     adaptiveHeight,
     pagination = 0,
@@ -230,6 +232,13 @@ export default forwardRef<SliderRef, Props>(function Slider(
             ))}
           </Track>
         </TrackWrapper>
+        {renderController?.(
+          currentSlide >= slideCount
+            ? 0
+            : currentSlide < 0
+            ? lastSlide
+            : currentSlide
+        )}
         {slideCount > slidesToShow &&
           Arrow(
             {

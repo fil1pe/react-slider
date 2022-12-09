@@ -41,6 +41,7 @@ In your JSX file, import the slider component as in the [example below](#example
 | slidesToScroll | slidesToShow | false | Number of slides to scroll on click on prev/next |
 | finite | false | false | Defines whether the slider should have finite scrolling or not |
 | renderArrow | `(props, type) => <button {...props}>{type === ArrowType.Next ? 'Next' : 'Previous'}</button>` | false | Allows customizing the arrow buttons |
+| renderController | none | false | Function that renders additional controllers in the wrapper div .main (e.g. full-screen button). Receives the current slide index as argument |
 | autoplayTimeout | none (∞) | false | Autoplay interval in milliseconds |
 | slidesToAppend | none | false | Additional number of slides to append before and after |
 | adaptiveHeight | false | false | Variable height |
