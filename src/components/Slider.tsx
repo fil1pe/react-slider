@@ -215,21 +215,22 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
             slidesPerPage={slidesToShow}
             adaptiveHeight={adaptiveHeight}
           >
-            {React.Children.map(slides, (slide, key) => (
-              <li
-                key={key}
-                ref={
-                  key ===
-                  ((finite && !slidesToAppend) || slideCount <= slidesToShow
-                    ? currentSlide
-                    : currentSlide + slidesToShow + slidesToAppend)
-                    ? currentSlideRef
-                    : undefined
-                }
-              >
-                {slide}
-              </li>
-            ))}
+            {React.Children.map(slides, (slide, key) => {
+              const isCurrentSlide =
+                key ===
+                ((finite && !slidesToAppend) || slideCount <= slidesToShow
+                  ? currentSlide
+                  : currentSlide + slidesToShow + slidesToAppend)
+              return (
+                <li
+                  key={key}
+                  ref={isCurrentSlide ? currentSlideRef : undefined}
+                  className={cn({ active: isCurrentSlide })}
+                >
+                  {slide}
+                </li>
+              )
+            })}
           </Track>
         </TrackWrapper>
         {renderController?.(

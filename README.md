@@ -29,7 +29,7 @@ In your JSX file, import the slider component as in the [example below](#example
 | .disabled | if arrow is disabled |
 | .track | wraps the ul containing the slides |
 | .dots | ul with the dots |
-| .active | active dot |
+| .active | active slide/dot |
 | .pages | pagination info |
 
 ## Component props
