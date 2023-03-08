@@ -7,7 +7,8 @@ function translateX(
 ) {
   if (!ref) return `translateX(${(slide * -100) / slidesToShow}%)`
   return `translateX(${
-    -slide * (ref.querySelector('li')?.offsetWidth || 0) + offset
+    -slide * (ref.querySelector('li')?.getBoundingClientRect().width || 0) +
+    offset
   }px)`
 }
 
