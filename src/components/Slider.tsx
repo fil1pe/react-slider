@@ -176,7 +176,7 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
   }))
 
   return (
-    <div className={className} ref={ref}>
+    <div className={className}>
       <div className="main">
         {slideCount > slidesToShow &&
           Arrow(
@@ -196,17 +196,17 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
               ? `${height}px`
               : undefined,
           }}
+          ref={ref}
         >
           <Track
             style={{
               transform: translateX(
-                ref.current,
+                currentSlideRef.current,
                 (finite && !slidesToAppend) || slideCount <= slidesToShow
                   ? currentSlide
                   : currentSlide + slidesToShow + slidesToAppend,
                 x,
-                slidesToShow,
-                currentSlideRef.current
+                slidesToShow
               ),
               transitionDuration: Boolean(transition)
                 ? `${transition}s`

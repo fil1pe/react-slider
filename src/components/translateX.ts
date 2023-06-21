@@ -1,14 +1,13 @@
 // position the slider:
 function translateX(
-  ref: HTMLDivElement | null,
+  currentSlideRef: HTMLLIElement | null,
   slide: number,
   offset: number,
-  slidesToShow: number,
-  currentSlideRef: HTMLLIElement | null
+  slidesToShow: number
 ) {
-  if (!ref) return `translateX(${(slide * -100) / slidesToShow}%)`
+  if (!currentSlideRef) return `translateX(${(slide * -100) / slidesToShow}%)`
   return `translateX(${
-    -slide * (currentSlideRef?.getBoundingClientRect().width || 0) + offset
+    -slide * (currentSlideRef.getBoundingClientRect().width || 0) + offset
   }px)`
 }
 

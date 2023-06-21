@@ -34,6 +34,7 @@ const useTouch = (
     if (startPosition.x >= 0) {
       // change slider position based on touching position:
       const onTouchMove = (e: TouchEvent) => {
+        e.stopPropagation()
         const { clientX, clientY } = e.touches[0]
         const x = clientX - startPosition.x
         const y = clientY - startPosition.y
