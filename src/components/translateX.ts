@@ -3,14 +3,12 @@ function translateX(
   ref: HTMLDivElement | null,
   slide: number,
   offset: number,
-  slidesToShow: number
+  slidesToShow: number,
+  currentSlideRef: HTMLLIElement | null
 ) {
   if (!ref) return `translateX(${(slide * -100) / slidesToShow}%)`
   return `translateX(${
-    -slide *
-      (ref.querySelector('.track > ul > .active')?.getBoundingClientRect()
-        .width || 0) +
-    offset
+    -slide * (currentSlideRef?.getBoundingClientRect().width || 0) + offset
   }px)`
 }
 

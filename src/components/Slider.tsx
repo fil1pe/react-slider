@@ -205,7 +205,8 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
                   ? currentSlide
                   : currentSlide + slidesToShow + slidesToAppend,
                 x,
-                slidesToShow
+                slidesToShow,
+                currentSlideRef.current
               ),
               transitionDuration: Boolean(transition)
                 ? `${transition}s`
