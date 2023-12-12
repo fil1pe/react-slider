@@ -2,6 +2,7 @@ import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -50,7 +51,7 @@ export type SliderRef = {
 
 export default forwardRef<SliderRef, SliderProps>(function Slider(
   {
-    children,
+    children: _children,
     slidesToShow = 1,
     slidesToScroll = slidesToShow,
     slidesToAppend = 0,
@@ -69,9 +70,10 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
   },
   thisRef
 ) {
+  const children = useMemo(() => React.Children.toArray(_children), [_children])
   const [locked, setLocked] = useState(false) // mutex
 
-  const slideCount = React.Children.count(children) // total number of slides
+  const slideCount = children.length // total number of slides
   const lastSlide = slideCount - slidesToScroll
   const [transition, setTransition] = useState<number>(0.5) // transition duration
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -145,16 +147,13 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
   // clone some slides to make it infinite:
   const slides = (
     (!finite || slidesToAppend) && slideCount > slidesToShow
-      ? prepend(React.Children.toArray(children), slidesToShow + slidesToAppend)
+      ? prepend(children, slidesToShow + slidesToAppend)
       : []
   )
-    .concat(React.Children.toArray(children))
+    .concat(children)
     .concat(
       (!finite || slidesToAppend) && slideCount > slidesToShow
-        ? append(
-            React.Children.toArray(children),
-            slidesToShow + slidesToAppend
-          )
+        ? append(children, slidesToShow + slidesToAppend)
         : []
     )
 
