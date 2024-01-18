@@ -12,6 +12,7 @@ import translateX from './translateX'
 import Track from './Track'
 import TrackWrapper from './TrackWrapper'
 import Dots from './Dots'
+import Pagination from './Pagination'
 import cn from 'classnames'
 
 // arrow type enum
@@ -281,15 +282,12 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
       )}
 
       {Boolean(pagination) && (
-        <span className="pages">
-          {(currentSlide < 0
-            ? lastSlide
-            : currentSlide >= slideCount
-            ? 0
-            : currentSlide) + 1}
-          {pagination > 1 ? ' / ' : '/'}
-          {slideCount}
-        </span>
+        <Pagination
+          type={pagination}
+          slideCount={slideCount}
+          slidesToScroll={slidesToScroll}
+          currentSlide={currentSlide}
+        />
       )}
     </div>
   )
