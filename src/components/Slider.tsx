@@ -1,5 +1,6 @@
 import React, {
   forwardRef,
+  useContext,
   useEffect,
   useImperativeHandle,
   useMemo,
@@ -14,6 +15,7 @@ import TrackWrapper from './TrackWrapper'
 import Dots from './Dots'
 import Pagination from './Pagination'
 import cn from 'classnames'
+import { context } from './sliderContext'
 
 // arrow type enum
 export enum ArrowType {
@@ -175,6 +177,16 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
     slickPrev: () => goToSlide(currentSlide + slidesToScroll),
   }))
 
+  // fix translation on window resize:
+  const { resizeIndicator } = useContext(context)
+  useEffect(() => {
+    if (locked) return
+    setTransition(0)
+    setCurrentSlide(currentSlide)
+    const timeout = setTimeout(() => setTransition(0.5), 500)
+    return () => clearTimeout(timeout)
+  }, [resizeIndicator])
+
   return (
     <div className={className}>
       <div className="main">
@@ -292,3 +304,5 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
     </div>
   )
 })
+
+export { default as SliderProvider } from './SliderProvider'

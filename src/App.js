@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import './App.css'
-import Slider from './components/Slider.tsx'
+import Slider, { SliderProvider } from './components/Slider.tsx'
 
 const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet']
 
@@ -8,7 +8,7 @@ function App() {
   const ref = useRef()
 
   return (
-    <>
+    <SliderProvider>
       <Slider
         className="example-slider"
         slidesToShow={2}
@@ -28,7 +28,7 @@ function App() {
         ))}
       </Slider>
       <button onClick={() => ref.current.slickGoTo(0)}>First slide</button>
-    </>
+    </SliderProvider>
   )
 }
 

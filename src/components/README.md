@@ -58,6 +58,10 @@ Referencing the slider allows you to manually change the current slide through t
 | slickNext | none | Goes to the next slide |
 | slickPrev | none | Goes to the previous slide |
 
+## Provider
+
+The `SliderProvider` exported by this package is used to adjust the slides positioning during screen resizing, preventing visual bugs.
+
 ## Example
 
 ```js
@@ -66,13 +70,15 @@ import Slider from '@fil1pe/react-slider'
 
 function App() {
   return (
-    <Slider slidesToShow={2} slidesToScroll={1} className="slider">
-      <div class="slide">1</div>
-      <div class="slide">2</div>
-      <div class="slide">3</div>
-      <div class="slide">4</div>
-      <div class="slide">5</div>
-    </Slider>
+    <SliderProvider>
+      <Slider slidesToShow={2} slidesToScroll={1} className="slider">
+        <div class="slide">1</div>
+        <div class="slide">2</div>
+        <div class="slide">3</div>
+        <div class="slide">4</div>
+        <div class="slide">5</div>
+      </Slider>
+    </SliderProvider>
   )
 }
 
