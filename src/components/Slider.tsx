@@ -142,6 +142,7 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
   // sliding on touch:
   const { ref, x } = useTouch(
     currentSlide,
+    lastSlide,
     slidesToScroll,
     goToSlide,
     setTransition

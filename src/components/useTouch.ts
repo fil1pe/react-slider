@@ -8,6 +8,7 @@ interface Position {
 // handle sliding on touch:
 const useTouch = (
   currentSlide: number,
+  lastSlide: number,
   slidesToScroll: number,
   goToSlide: (slide: number) => void,
   setTransition: React.Dispatch<React.SetStateAction<number>> // set transition duration
@@ -55,7 +56,12 @@ const useTouch = (
       const threshold = position.x / (wrapper?.offsetWidth || 1)
       // move on to the next/prev slide based on the threshold
       if (threshold <= -0.33) goToSlide(currentSlide + slidesToScroll)
-      else if (threshold >= 0.33) goToSlide(currentSlide - slidesToScroll)
+      else if (threshold >= 0.33)
+        goToSlide(
+          currentSlide === lastSlide
+            ? Math.max(currentSlide - slidesToScroll, 0)
+            : currentSlide - slidesToScroll
+        )
       setPosition({ x: 0, y: 0 })
     }
     wrapper?.addEventListener('touchend', onTouchEnd)
