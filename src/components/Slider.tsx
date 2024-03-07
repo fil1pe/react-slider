@@ -193,7 +193,12 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
         {slideCount > slidesToShow &&
           Arrow(
             {
-              onClick: () => goToSlide(currentSlide - slidesToScroll),
+              onClick: () =>
+                goToSlide(
+                  currentSlide === lastSlide
+                    ? Math.max(currentSlide - slidesToScroll, 0)
+                    : currentSlide - slidesToScroll
+                ),
               className: cn(
                 'arrow',
                 finite && currentSlide === 0 && 'disabled'
