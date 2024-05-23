@@ -47,6 +47,7 @@ In your JSX file, import the slider component as in the [example below](#example
 | adaptiveHeight | false | false | Variable height |
 | pagination | 0 | false | Shows current slide index alongside the total number of slides<br/>(1 for no spacing, 2 otherwise) |
 | onSlideChange(int) | none | false | Function triggered on slide change |
+| initialSlide | 0 | false | Number of the first slide to show |
 
 ## Methods
 

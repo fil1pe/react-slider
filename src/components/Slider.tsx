@@ -35,6 +35,7 @@ type SliderProps = {
   slidesToShow?: number // number of slides per page
   slidesToScroll?: number // number of slides to scroll on click on prev/next
   slidesToAppend?: number // additional number of slides to append before and after
+  initialSlide?: number // number of the first slide to show
   finite?: boolean
   className?: string
   renderArrow?: (props: ArrowProps, type?: ArrowType) => React.ReactElement
@@ -58,6 +59,7 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
     slidesToShow = 1,
     slidesToScroll = slidesToShow,
     slidesToAppend = 0,
+    initialSlide = 0,
     finite,
     className,
     renderArrow: Arrow = (props, type) => (
@@ -79,7 +81,7 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
   const slideCount = children.length // total number of slides
   const lastSlide = slideCount - slidesToScroll
   const [transition, setTransition] = useState<number>(0.5) // transition duration
-  const [currentSlide, setCurrentSlide] = useState(0)
+  const [currentSlide, setCurrentSlide] = useState(initialSlide)
 
   const goToSlide = (slide: number) => {
     if (locked || slideCount <= slidesToShow) return
@@ -187,6 +189,15 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
     const timeout = setTimeout(() => setTransition(0.5), 500)
     return () => clearTimeout(timeout)
   }, [resizeIndicator])
+
+  // go to the initial slide when it changes:
+  useEffect(() => {
+    if (locked) return
+    setTransition(0)
+    setCurrentSlide(initialSlide)
+    const timeout = setTimeout(() => setTransition(0.5), 500)
+    return () => clearTimeout(timeout)
+  }, [initialSlide])
 
   return (
     <div className={className}>
