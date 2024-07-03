@@ -37,6 +37,7 @@ type SliderProps = {
   slidesToAppend?: number // additional number of slides to append before and after
   initialSlide?: number // number of the first slide to show
   finite?: boolean
+  slidableWithMouse?: boolean
   className?: string
   renderArrow?: (props: ArrowProps, type?: ArrowType) => React.ReactElement
   renderController?: (currentSlide: number) => React.ReactElement // additional controller
@@ -61,6 +62,7 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
     slidesToAppend = 0,
     initialSlide = 0,
     finite,
+    slidableWithMouse = false,
     className,
     renderArrow: Arrow = (props, type) => (
       <button {...props}>
@@ -147,7 +149,8 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
     lastSlide,
     slidesToScroll,
     goToSlide,
-    setTransition
+    setTransition,
+    slidableWithMouse
   )
 
   // clone some slides to make it infinite:

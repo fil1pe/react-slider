@@ -11,9 +11,10 @@ const useTouch = (
   lastSlide: number,
   slidesToScroll: number,
   goToSlide: (slide: number) => void,
-  setTransition: React.Dispatch<React.SetStateAction<number>> // set transition duration
+  setTransition: React.Dispatch<React.SetStateAction<number>>, // set transition duration
+  slidableWithMouse: boolean
 ) => {
-  const [startPosition, setStartPosition] = useState<Position>({ x: 0, y: 0 }) // initial touching position
+  const [startPosition, setStartPosition] = useState<Position>({ x: -1, y: -1 }) // initial touching position
   const [position, setPosition] = useState<Position>({ x: 0, y: 0 }) // save touching position
   const ref = useRef<HTMLDivElement>(null) // wrapper element to drag
 
@@ -21,13 +22,23 @@ const useTouch = (
     const wrapper = ref.current
     // capture initial touching position:
     const onTouchStart = (e: TouchEvent) => {
+      e.preventDefault()
       if ((e.target as HTMLElement).tagName === 'BUTTON') return
       const { clientX: x, clientY: y } = e.touches[0]
       setStartPosition({ x, y })
       setTransition(0) // avoid css transition
     }
+    const onMouseDown = (e: MouseEvent) => {
+      if ((e.target as HTMLElement).tagName === 'BUTTON') return
+      setStartPosition({ x: e.pageX, y: e.pageY })
+      setTransition(0)
+    }
     wrapper?.addEventListener('touchstart', onTouchStart)
-    return () => wrapper?.removeEventListener('touchstart', onTouchStart)
+    slidableWithMouse && wrapper?.addEventListener('mousedown', onMouseDown)
+    return () => {
+      wrapper?.removeEventListener('touchstart', onTouchStart)
+      wrapper?.removeEventListener('mousedown', onMouseDown)
+    }
   }, [])
 
   useEffect(() => {
@@ -44,8 +55,20 @@ const useTouch = (
           setPosition({ x, y })
         } else setStartPosition({ x: -1, y: -1 })
       }
+      const onMouseMove = (e: MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setPosition({
+          x: e.pageX - startPosition.x,
+          y: e.pageY - startPosition.y,
+        })
+      }
       wrapper?.addEventListener('touchmove', onTouchMove)
-      return () => wrapper?.removeEventListener('touchmove', onTouchMove)
+      slidableWithMouse && wrapper?.addEventListener('mousemove', onMouseMove)
+      return () => {
+        wrapper?.removeEventListener('touchmove', onTouchMove)
+        wrapper?.removeEventListener('mousemove', onMouseMove)
+      }
     }
   }, [startPosition])
 
@@ -63,9 +86,15 @@ const useTouch = (
             : currentSlide - slidesToScroll
         )
       setPosition({ x: 0, y: 0 })
+      setStartPosition({ x: -1, y: -1 })
     }
+    const onMouseUp = onTouchEnd
     wrapper?.addEventListener('touchend', onTouchEnd)
-    return () => wrapper?.removeEventListener('touchend', onTouchEnd)
+    slidableWithMouse && wrapper?.addEventListener('mouseup', onMouseUp)
+    return () => {
+      wrapper?.removeEventListener('touchend', onTouchEnd)
+      wrapper?.removeEventListener('mouseup', onMouseUp)
+    }
   }, [currentSlide, position])
 
   return { ref, x: position.x }
