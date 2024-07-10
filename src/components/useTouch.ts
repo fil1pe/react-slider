@@ -21,20 +21,20 @@ const useTouch = (
   useEffect(() => {
     const wrapper = ref.current
     // capture initial touching position:
-    const onTouchStart = (e: TouchEvent) => {
-      e.preventDefault()
-      if ((e.target as HTMLElement).tagName === 'BUTTON') return
-      const { clientX: x, clientY: y } = e.touches[0]
-      setStartPosition({ x, y })
-      setTransition(0) // avoid css transition
-    }
     const onMouseDown = (e: MouseEvent) => {
       if ((e.target as HTMLElement).tagName === 'BUTTON') return
       setStartPosition({ x: e.pageX, y: e.pageY })
       setTransition(0)
     }
-    wrapper?.addEventListener('touchstart', onTouchStart)
     slidableWithMouse && wrapper?.addEventListener('mousedown', onMouseDown)
+    const onTouchStart = (e: TouchEvent) => {
+      wrapper?.removeEventListener('mousedown', onMouseDown)
+      if ((e.target as HTMLElement).tagName === 'BUTTON') return
+      const { clientX: x, clientY: y } = e.touches[0]
+      setStartPosition({ x, y })
+      setTransition(0) // avoid css transition
+    }
+    wrapper?.addEventListener('touchstart', onTouchStart)
     return () => {
       wrapper?.removeEventListener('touchstart', onTouchStart)
       wrapper?.removeEventListener('mousedown', onMouseDown)
