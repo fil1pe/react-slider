@@ -1,0 +1,32 @@
+.react-slider-track {
+  overflow: hidden;
+}
+
+.react-slider-track>ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+}
+
+.react-slider-track>ul>li {
+  flex: 0 0 calc(100% / var(--slides-per-page));
+}
+
+.react-slider-dots {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.react-slider-dots button {
+  font-size: 0;
+  padding: 0;
+  display: block;
+  width: 8px;
+  height: 8px;
+  margin: 0 4px;
+  border-radius: 50%;
+}

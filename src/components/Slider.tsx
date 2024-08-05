@@ -222,7 +222,6 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
             ArrowType.Prev
           )}
         <TrackWrapper
-          className="track"
           style={{
             height: Boolean(adaptiveHeight && height)
               ? `${height}px`
@@ -287,7 +286,7 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
       </div>
 
       {slideCount > slidesToShow && (
-        <Dots className="dots">
+        <Dots>
           {Array.from(Array(dotCount).keys()).map((_, key) => (
             <li
               key={key}
