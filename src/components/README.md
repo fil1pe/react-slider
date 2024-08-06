@@ -18,7 +18,7 @@ $ yarn add @fil1pe/react-slider
 
 ## Usage
 
-In your JSX file, import the slider component as in the [example below](#example). You are free to customize it using the prop className and the classes that follow.
+In your JSX file, import the slider component and the CSS file as in the [example below](#example). You are free to customize it using the prop className and the classes that follow.
 
 ## Classes
 
@@ -69,6 +69,7 @@ The `SliderProvider` exported by this package is used to adjust the slides posit
 ```js
 import React from 'react'
 import Slider from '@fil1pe/react-slider'
+import '@fil1pe/react-slider/style.css'
 
 function App() {
   return (
