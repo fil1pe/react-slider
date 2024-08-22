@@ -1,6 +1,16 @@
 import React, { useMemo } from 'react'
 
-export default function Pagination({
+/**
+ * A component that renders pagination information.
+ *
+ * @param {Object} props - The properties object.
+ * @param {number} props.type - The type of pagination display.
+ * @param {number} props.slideCount - The total number of slides.
+ * @param {number} props.slidesToScroll - The number of slides to scroll per page.
+ * @param {number} props.currentSlide - The index of the current slide.
+ * @returns {JSX.Element} - The JSX element representing the pagination.
+ */
+const Pagination = ({
   type,
   slideCount,
   slidesToScroll,
@@ -10,7 +20,7 @@ export default function Pagination({
   slideCount: number
   slidesToScroll: number
   currentSlide: number
-}) {
+}) => {
   const pageCount = useMemo(
     () => Math.ceil(slideCount / slidesToScroll),
     [slideCount, slidesToScroll]
@@ -33,3 +43,5 @@ export default function Pagination({
     </span>
   )
 }
+
+export default Pagination

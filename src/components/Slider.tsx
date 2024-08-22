@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {
   forwardRef,
   useContext,
@@ -8,53 +9,88 @@ import React, {
   useState,
 } from 'react'
 import useTouch from './useTouch'
-import append, { prepend } from './append'
-import translateX from './translateX'
-import Track from './Track'
-import TrackWrapper from './TrackWrapper'
-import Dots from './Dots'
-import Pagination from './Pagination'
+import append, { prepend } from './utils/append'
+import translateX from './utils/translateX'
+import Track from './components/Track'
+import TrackWrapper from './components/TrackWrapper'
+import Dots from './components/Dots'
+import Pagination from './components/Pagination'
 import cn from 'classnames'
 import { context } from './sliderContext'
 
-// arrow type enum
+/**
+ * Enum for arrow types.
+ *
+ * @readonly
+ * @enum {string}
+ */
 export enum ArrowType {
   Prev,
   Next,
 }
 
-// arrow html props
 type ArrowProps = React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
 >
 
-// component settings:
+/**
+ * Props for the Slider component.
+ *
+ * @typedef {Object} SliderProps
+ * @property {number} [slidesToShow=1] - Number of slides per page.
+ * @property {number} [slidesToScroll=slidesToShow] - Number of slides to scroll on click on prev/next.
+ * @property {number} [slidesToAppend=0] - Additional number of slides to append before and after.
+ * @property {number} [initialSlide=0] - Number of the first slide to show.
+ * @property {boolean} [finite] - Whether the slider is finite.
+ * @property {boolean} [slidableWithMouse=false] - Whether the slider can be slid with mouse events.
+ * @property {string} [className] - Additional class for the slider.
+ * @property {function} [renderArrow] - Function to render custom arrows.
+ * @property {function} [renderController] - Function to render an additional controller.
+ * @property {number} [autoplayTimeout] - Autoplay interval in milliseconds.
+ * @property {boolean} [adaptiveHeight] - Whether the slider should adapt its height.
+ * @property {number} [pagination=0] - Shows current slide index alongside the total number of slides.
+ * @property {function} [onSlideChange] - Callback function when the slide changes.
+ */
 type SliderProps = {
   children: React.ReactNode
-  slidesToShow?: number // number of slides per page
-  slidesToScroll?: number // number of slides to scroll on click on prev/next
-  slidesToAppend?: number // additional number of slides to append before and after
-  initialSlide?: number // number of the first slide to show
+  slidesToShow?: number
+  slidesToScroll?: number
+  slidesToAppend?: number
+  initialSlide?: number
   finite?: boolean
   slidableWithMouse?: boolean
   className?: string
   renderArrow?: (props: ArrowProps, type?: ArrowType) => React.ReactElement
-  renderController?: (currentSlide: number) => React.ReactElement // additional controller
-  autoplayTimeout?: number // autoplay interval in ms
+  renderController?: (currentSlide: number) => React.ReactElement
+  autoplayTimeout?: number
   adaptiveHeight?: boolean
-  pagination?: number // shows current slide index alongside the total number of slides
+  pagination?: number
   onSlideChange?: (slide: number) => void
 }
 
-// exposed methods:
+/**
+ * Exposed methods for the Slider component.
+ *
+ * @typedef {Object} SliderRef
+ * @property {function(number): void} slickGoTo - Method to go to a specific slide.
+ * @property {function(): void} slickNext - Method to go to the next slide.
+ * @property {function(): void} slickPrev - Method to go to the previous slide.
+ */
 export type SliderRef = {
   slickGoTo: (slide: number) => void
   slickNext: () => void
   slickPrev: () => void
 }
 
-export default forwardRef<SliderRef, SliderProps>(function Slider(
+/**
+ * Slider component.
+ *
+ * @param {SliderProps} props - The properties for the Slider component.
+ * @param {React.Ref<SliderRef>} thisRef - The reference to the Slider component.
+ * @returns {JSX.Element} - The rendered Slider component.
+ */
+const Slider = forwardRef<SliderRef, SliderProps>(function Slider(
   {
     children: _children,
     slidesToShow = 1,
@@ -78,11 +114,16 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
   thisRef
 ) {
   const children = useMemo(() => React.Children.toArray(_children), [_children])
-  const [locked, setLocked] = useState(false) // mutex
 
-  const slideCount = children.length // total number of slides
+  // Mutex
+  const [locked, setLocked] = useState(false)
+
+  // Total number of slides
+  const slideCount = children.length
   const lastSlide = slideCount - slidesToScroll
-  const [transition, setTransition] = useState<number>(0.5) // transition duration
+
+  // Transition duration
+  const [transition, setTransition] = useState<number>(0.5)
   const [currentSlide, setCurrentSlide] = useState(initialSlide)
 
   const goToSlide = (slide: number) => {
@@ -96,7 +137,8 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
       }
       setCurrentSlide(slideCount)
       onSlideChange?.(0)
-      // magic for infinite slider:
+
+      // Magic for infinite slider
       setTimeout(() => {
         setTransition(0)
         setCurrentSlide(0)
@@ -113,7 +155,8 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
       }
       setCurrentSlide(-slidesToScroll)
       onSlideChange?.(lastSlide)
-      // magic for infinite slider:
+
+      // Magic for infinite slider
       setTimeout(() => {
         setTransition(0)
         setCurrentSlide(lastSlide)
@@ -132,7 +175,7 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
     }
   }
 
-  // autoplay:
+  // Autoplay
   useEffect(() => {
     if (autoplayTimeout) {
       const intervalId = setInterval(
@@ -143,7 +186,7 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
     }
   }, [autoplayTimeout, goToSlide])
 
-  // sliding on touch:
+  // Sliding on touch
   const { ref, x } = useTouch(
     currentSlide,
     lastSlide,
@@ -153,7 +196,7 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
     slidableWithMouse
   )
 
-  // clone some slides to make it infinite:
+  // Clone some slides to make it infinite
   const slides = (
     (!finite || slidesToAppend) && slideCount > slidesToShow
       ? prepend(children, slidesToShow + slidesToAppend)
@@ -166,24 +209,24 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
         : []
     )
 
-  // number of dots:
-  const dotCount = Math.ceil(slideCount / slidesToScroll) // number of dots
+  // Number of dots
+  const dotCount = Math.ceil(slideCount / slidesToScroll)
 
-  // adaptive height:
+  // Adaptive height
   const currentSlideRef = useRef<HTMLLIElement>(null)
   const [height, setHeight] = useState(0)
   useEffect(() => {
     if (adaptiveHeight) setHeight(currentSlideRef.current?.offsetHeight || 0)
   }, [adaptiveHeight, currentSlide, children])
 
-  // expose some methods:
+  // Expose some methods
   useImperativeHandle(thisRef, () => ({
     slickGoTo: goToSlide,
     slickNext: () => goToSlide(currentSlide - slidesToScroll),
     slickPrev: () => goToSlide(currentSlide + slidesToScroll),
   }))
 
-  // fix translation on window resize:
+  // Fix translation on window resize
   const { resizeIndicator } = useContext(context)
   useEffect(() => {
     if (locked) return
@@ -193,7 +236,7 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
     return () => clearTimeout(timeout)
   }, [resizeIndicator])
 
-  // go to the initial slide when it changes:
+  // Go to the initial slide when it changes
   useEffect(() => {
     if (locked) return
     setTransition(0)
@@ -324,4 +367,5 @@ export default forwardRef<SliderRef, SliderProps>(function Slider(
   )
 })
 
+export default Slider
 export { default as SliderProvider } from './SliderProvider'
