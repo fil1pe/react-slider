@@ -1,5 +1,10 @@
 # React Slider
 
+![npm version](https://img.shields.io/npm/v/@fil1pe/react-slider)
+![npm downloads](https://img.shields.io/npm/dm/@fil1pe/react-slider)
+![license](https://img.shields.io/npm/l/@fil1pe/react-slider)
+![build status](https://img.shields.io/github/actions/workflow/status/fil1pe/react-slider/build.yml)
+
 This is a simple slider implementation in React. Make your own carousels of images, texts or whatever you need easily with this component and some stylesheet.
 
 ## Installation
@@ -7,7 +12,7 @@ This is a simple slider implementation in React. Make your own carousels of imag
 ### npm
 
 ```bash
-$ npm install @fil1pe/react-slider --save
+$ npm install @fil1pe/react-slider
 ```
 
 ### yarn
@@ -19,6 +24,16 @@ $ yarn add @fil1pe/react-slider
 ## Usage
 
 In your JSX file, import the slider component and the CSS file as in the [example below](#example). You are free to customize it using the prop className and the classes that follow.
+
+### Usage with Next.js
+
+If you are using this package with Next.js, you need to add the following configuration to your `next.config.js` (or `next.config.mjs`) file to ensure the package is transpiled correctly:
+
+```js
+module.exports = {
+  transpilePackages: ['@fil1pe/react-slider'],
+}
+```
 
 ## Classes
 
