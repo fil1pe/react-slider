@@ -36,7 +36,7 @@ const Pagination = ({
   )
 
   return (
-    <span className="pages">
+    <span className="react-slider-pages pages">
       {currentPage + 1}
       {type > 1 ? ' / ' : '/'}
       {pageCount}

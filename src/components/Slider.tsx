@@ -247,7 +247,7 @@ const Slider = forwardRef<SliderRef, SliderProps>(function Slider(
 
   return (
     <div className={className}>
-      <div className="main">
+      <div className="react-slider-main main">
         {slideCount > slidesToShow &&
           Arrow(
             {
@@ -258,7 +258,7 @@ const Slider = forwardRef<SliderRef, SliderProps>(function Slider(
                     : currentSlide - slidesToScroll
                 ),
               className: cn(
-                'arrow',
+                'react-slider-arrow arrow',
                 finite && currentSlide === 0 && 'disabled'
               ),
             },
@@ -320,7 +320,7 @@ const Slider = forwardRef<SliderRef, SliderProps>(function Slider(
             {
               onClick: () => goToSlide(currentSlide + slidesToScroll),
               className: cn(
-                'arrow',
+                'react-slider-arrow arrow',
                 finite && currentSlide === lastSlide && 'disabled'
               ),
             },

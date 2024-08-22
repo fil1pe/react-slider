@@ -13,7 +13,7 @@ const TrackWrapper = forwardRef<
   HTMLDivElement,
   { style: React.CSSProperties; children: React.ReactNode }
 >(({ style, children }, ref) => (
-  <div className="react-slider-track" style={style} ref={ref}>
+  <div className="react-slider-track track" style={style} ref={ref}>
     {children}
   </div>
 ))

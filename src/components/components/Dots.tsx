@@ -8,7 +8,7 @@ import React from 'react'
  * @returns {JSX.Element} - The JSX element representing the dots list.
  */
 const Dots = ({ children }: { children: React.ReactNode }) => (
-  <ul className="react-slider-dots">{children}</ul>
+  <ul className="react-slider-dots dots">{children}</ul>
 )
 
 export default Dots
